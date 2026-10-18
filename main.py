@@ -93,10 +93,9 @@ class RequestContextMiddleware(BaseHTTPMiddleware):
         request.state.request_id = request_id
 
         response = await call_next(request)
-
         response.headers["X-Request-ID"] = request_id
-        return response
 
+        return response
 
 # Middleware order matters: the last added is outermost.
 app.add_middleware(RateLimitMiddleware)
