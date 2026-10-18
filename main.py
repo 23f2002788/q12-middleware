@@ -57,9 +57,14 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
 
         # The client has already used all 14 requests.
         if len(bucket) >= BUCKET_SIZE:
+            retry_after = max(
+                1,
+                int(WINDOW_SECONDS - (now - bucket[0]) + 0.999),
+            )
             return JSONResponse(
                 status_code=429,
                 content={"detail": "Rate limit exceeded"},
+                headers={"Retry-After": str(retry_after)},
             )
 
         bucket.append(now)
